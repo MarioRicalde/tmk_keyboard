@@ -1,0 +1,12 @@
+# HHKB Mario's Keymap
+
+1. Replaces `;` with `:`.
+2. Adds media bindings when pressing `fn + [qwe]`.
+3. `Left Shift` outputs `(` when tapped and the `Right Shift` outputs `)`.
+4. `Control` works as `Escape` when tapped.
+
+#### TODO
+
+1. Add Vi Mode.
+2. Add Gaming/Photoshop Mode. (removes the bindings to all mod keys.)
+3. Add Windows Mode.
