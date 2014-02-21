@@ -12,11 +12,11 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
     /* https://github.com/tmk/tmk_keyboard/blob/5b425731c5b662d107ba0f970a7ae7c7fe97d01b/doc/keycode.txt */
     /* Layer 0: Default Layer
      * ,-----------------------------------------------------------.
-     * |Esc|  1|  2|  3|  4|  5|  6|  7|  8|  9|  0|  -|  =|  \|  `|
+     * |Esc|  1|  2|  3|  4|  5|  6|  7|  8|  9|  0|  -|  =|  \|  `| GRV
      * |-----------------------------------------------------------|
      * |Tab  |  Q|  W|  E|  R|  T|  Y|  U|  I|  O|  P|  [|  ]|Backs|
      * |-----------------------------------------------------------|
-     * |Fn11  |  A|  S|  D|  F|  G|  H|  J|  K|  L|  ;|  '|Enter   |
+     * |Fn11  |  A|  S|  D|  F|  G|  H|  J|  K|  L|  :|  '|Enter   |
      * |-----------------------------------------------------------|
      * |Fn12    |  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Shift |Fn1|
      * `-----------------------------------------------------------'
@@ -25,8 +25,8 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
      */
     KEYMAP(ESC, 1,   2,   3,   4,   5,   6,   7,   8,   9,   0,   MINS,EQL, BSLS,GRV,   \
            TAB, Q,   W,   E,   R,   T,   Y,   U,   I,   O,   P,   LBRC,RBRC,BSPC,       \
-           FN11,A,   S,   D,   F,   G,   H,   J,   K,   L,   SCLN,QUOT,ENT,             \
-           FN12,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,RSFT,FN1,             \
+           FN11,A,   S,   D,   F,   G,   H,   J,   K,   L,   FN13,QUOT,ENT,             \
+           LSFT,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,RSFT,FN1,             \
                 LALT,LGUI,          SPC,                RGUI,RALT),
 
     /* Layer 1: HHKB mode with Media Keys (HHKB Fn)
@@ -68,6 +68,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
 enum function_id {
     LSHIFT_LPAREN,
     RSHIFT_RPAREN,
+    SCLN_SWAP,
 };
 
 enum macro_id {
@@ -89,8 +90,8 @@ const uint16_t fn_actions[] PROGMEM = {
 
     [11] = ACTION_MODS_TAP_KEY(MOD_LCTL, KC_ESC),      // LControl with tap Esc
     [12] = ACTION_MODS_ONESHOT(MOD_LSFT),             // Oneshot Shift*
+    [13] = ACTION_FUNCTION(SCLN_SWAP),            // Close Tab
 };
-
 
 /*
  * Macro definition
@@ -132,9 +133,26 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
     tap_t tap = record->tap;
 
     switch (id) {
+        case SCLN_SWAP:
+            if (event.pressed) {
+              if ( get_mods() != MOD_BIT(KC_LSHIFT) ) {
+                add_mods(MOD_BIT(KC_LSHIFT));
+              } else if ( get_mods() == MOD_BIT(KC_LSHIFT) ) {
+                del_mods(MOD_BIT(KC_LSHIFT));
+              }
+              add_key(KC_SCLN);
+              send_keyboard_report();
+              del_mods(MOD_BIT(KC_LSHIFT));
+              del_key(KC_SCLN);
+              send_keyboard_report();
+            } else {
+              del_key(KC_SCLN);
+              del_mods(MOD_BIT(KC_LSHIFT));
+              send_keyboard_report();
+            }
+            break;
         case LSHIFT_LPAREN:
-            // LShft
-            // + tap '('
+            // LShft + tap '('
             // NOTE: cant use register_code to avoid conflicting with magic key bind
             if (event.pressed) {
                 if (tap.count == 0 || tap.interrupted) {
