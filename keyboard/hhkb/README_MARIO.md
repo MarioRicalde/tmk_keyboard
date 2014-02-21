@@ -1,5 +1,9 @@
 # HHKB Mario's Keymap
 
+To install press the switch on your board and then run `sleep 5 && make dfu KEYMAP=mario`.
+
+#### Key Features
+
 1. Replaces `;` with `:`.
 2. Adds media bindings when pressing `fn + [qwe]`.
 3. `Left Shift` outputs `(` when tapped and the `Right Shift` outputs `)`.
