@@ -26,7 +26,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
     KEYMAP(ESC, 1,   2,   3,   4,   5,   6,   7,   8,   9,   0,   MINS,EQL, BSLS,GRV,   \
            TAB, Q,   W,   E,   R,   T,   Y,   U,   I,   O,   P,   LBRC,RBRC,BSPC,       \
            FN11,A,   S,   D,   F,   G,   H,   J,   K,   L,   FN13,QUOT,ENT,             \
-           FN14,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,FN15,FN1,             \
+           LSFT,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,RSFT,FN1,             \
                 LALT,LGUI,          SPC,                RGUI,RALT),
 
     /* Layer 1: HHKB mode with Media Keys (HHKB Fn)
@@ -115,6 +115,7 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
         case RSHIFT_PAREN:
             if (tap.count > 0 && !tap.interrupted) {
                 return (event.pressed ?
+
                         MACRO( D(RSHIFT), D(0), U(0), U(RSHIFT), END ) : MACRO_NONE);
             } else {
                 return (event.pressed ?
@@ -133,23 +134,29 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
     keyevent_t event = record->event;
     tap_t tap = record->tap;
+    bool isShiftPressed = false;
 
     switch (id) {
         case SCLN_SWAP:
             if (event.pressed) {
-              if ( get_mods() != MOD_BIT(KC_LSHIFT) ) {
+              isShiftPressed = get_mods() == MOD_BIT(KC_LSHIFT);
+
+              if ( isShiftPressed == false ) {
                 add_mods(MOD_BIT(KC_LSHIFT));
-              } else if ( get_mods() == MOD_BIT(KC_LSHIFT) ) {
+              } else if ( isShiftPressed ) {
                 del_mods(MOD_BIT(KC_LSHIFT));
               }
+
               add_key(KC_SCLN);
               send_keyboard_report();
-              del_mods(MOD_BIT(KC_LSHIFT));
+
+              if ( isShiftPressed == false ) {
+                del_mods(MOD_BIT(KC_LSHIFT));
+              } else if ( isShiftPressed ) {
+                add_mods(MOD_BIT(KC_LSHIFT));
+              }
+
               del_key(KC_SCLN);
-              send_keyboard_report();
-            } else {
-              del_key(KC_SCLN);
-              del_mods(MOD_BIT(KC_LSHIFT));
               send_keyboard_report();
             }
             break;
