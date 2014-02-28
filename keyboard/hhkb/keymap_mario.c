@@ -134,27 +134,25 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
     keyevent_t event = record->event;
     tap_t tap = record->tap;
-    bool isShiftPressed = false;
+    bool isLShiftPressed;
+    bool isRShiftPressed;
 
     switch (id) {
         case SCLN_SWAP:
             if (event.pressed) {
-              isShiftPressed = get_mods() == MOD_BIT(KC_LSHIFT);
+              isLShiftPressed = get_mods() == MOD_BIT(KC_LSHIFT);
+              isRShiftPressed = get_mods() == MOD_BIT(KC_RSHIFT);
 
-              if ( isShiftPressed == false ) {
-                add_mods(MOD_BIT(KC_LSHIFT));
-              } else if ( isShiftPressed ) {
-                del_mods(MOD_BIT(KC_LSHIFT));
-              }
+              if ( isRShiftPressed ) { del_mods(MOD_BIT(KC_RSHIFT)); }
+              else if ( isLShiftPressed == false ) { add_mods(MOD_BIT(KC_LSHIFT)); }
+              else if ( isLShiftPressed ) { del_mods(MOD_BIT(KC_LSHIFT)); }
 
               add_key(KC_SCLN);
               send_keyboard_report();
 
-              if ( isShiftPressed == false ) {
-                del_mods(MOD_BIT(KC_LSHIFT));
-              } else if ( isShiftPressed ) {
-                add_mods(MOD_BIT(KC_LSHIFT));
-              }
+              if ( isRShiftPressed ) { add_mods(MOD_BIT(KC_RSHIFT)); }
+              else if ( isLShiftPressed == false ) { del_mods(MOD_BIT(KC_LSHIFT)); }
+              else if ( isLShiftPressed ) { add_mods(MOD_BIT(KC_LSHIFT)); }
 
               del_key(KC_SCLN);
               send_keyboard_report();
