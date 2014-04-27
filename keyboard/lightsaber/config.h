@@ -15,26 +15,32 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BACKLIGHT_H
-#define BACKLIGHT_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
-#include <stdint.h>
-#include <stdbool.h>
+/* USB Device descriptor parameter */
+#define VENDOR_ID       0xFEED
+#define PRODUCT_ID      0x6050
+#define DEVICE_VER      0x0104
+#define MANUFACTURER    Duck
+#define PRODUCT         Lightsaber
 
-typedef union {
-    uint8_t raw;
-    struct {
-        bool    enable :1;
-        uint8_t level  :7;
-    };
-} backlight_config_t;
+/* message strings */
+#define DESCRIPTION     t.m.k. keyboard firmware for Lightsaber
 
-void backlight_init(void);
-void backlight_increase(void);
-void backlight_decrease(void);
-void backlight_toggle(void);
-void backlight_step(void);
-void backlight_set(uint8_t level);
-void backlight_level(uint8_t level);
+/* matrix size */
+#define MATRIX_ROWS 6
+#define MATRIX_COLS 18
+
+/* number of backlight levels */
+#define BACKLIGHT_LEVELS 1
+
+/* Set 0 if need no debouncing */
+#define DEBOUNCE    5
+
+/* key combination for command */
+#define IS_COMMAND() ( \
+    keyboard_report->mods == (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT)) \
+)
 
 #endif

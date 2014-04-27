@@ -1,5 +1,5 @@
 /*
-Copyright 2013 Mathias Andersson <wraul@dbox.se>
+Copyright 2014 Ralf Schmitt <ralf@bunkertor.net>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,26 +15,40 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BACKLIGHT_H
-#define BACKLIGHT_H
+#include <avr/io.h>
+#include "stdint.h"
+#include "led.h"
 
-#include <stdint.h>
-#include <stdbool.h>
+/* LED pin configuration
+ *
+ * Caps      PB0 (low)
+ * NumLock   PB4 (low)
+ *
+ */
+void led_set(uint8_t usb_led)
+{
+    // Set as output.
+    DDRB |= (1<<0) | (1<<4);
 
-typedef union {
-    uint8_t raw;
-    struct {
-        bool    enable :1;
-        uint8_t level  :7;
-    };
-} backlight_config_t;
+    if (usb_led & (1<<USB_LED_CAPS_LOCK))
+    {
+        // Output low.
+        PORTB &= ~(1<<0);
+    }
+    else
+    {
+        // Output high.
+        PORTB |= (1<<0);
+    }
 
-void backlight_init(void);
-void backlight_increase(void);
-void backlight_decrease(void);
-void backlight_toggle(void);
-void backlight_step(void);
-void backlight_set(uint8_t level);
-void backlight_level(uint8_t level);
-
-#endif
+    if (usb_led & (1<<USB_LED_NUM_LOCK))
+    {
+        // Output low.
+        PORTB &= ~(1<<4);
+    }
+    else
+    {
+        // Output high.
+        PORTB |= (1<<4);
+    }
+}
