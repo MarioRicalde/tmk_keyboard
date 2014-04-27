@@ -136,23 +136,31 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
     tap_t tap = record->tap;
     bool isLShiftPressed;
     bool isRShiftPressed;
+    bool isLAltPressed;
+    bool isRAltPressed;
 
     switch (id) {
         case SCLN_SWAP:
             if (event.pressed) {
               isLShiftPressed = get_mods() == MOD_BIT(KC_LSHIFT);
               isRShiftPressed = get_mods() == MOD_BIT(KC_RSHIFT);
+              isLAltPressed = get_mods() == MOD_BIT(KC_LALT);
+              isRAltPressed = get_mods() == MOD_BIT(KC_RALT);
 
-              if ( isRShiftPressed ) { del_mods(MOD_BIT(KC_RSHIFT)); }
-              else if ( isLShiftPressed == false ) { add_mods(MOD_BIT(KC_LSHIFT)); }
-              else if ( isLShiftPressed ) { del_mods(MOD_BIT(KC_LSHIFT)); }
+              if ( isLAltPressed == false && isRAltPressed == false ) {
+                if ( isRShiftPressed ) { del_mods(MOD_BIT(KC_RSHIFT)); }
+                else if ( isLShiftPressed == false ) { add_mods(MOD_BIT(KC_LSHIFT)); }
+                else if ( isLShiftPressed ) { del_mods(MOD_BIT(KC_LSHIFT)); }
+              }
 
               add_key(KC_SCLN);
               send_keyboard_report();
 
-              if ( isRShiftPressed ) { add_mods(MOD_BIT(KC_RSHIFT)); }
-              else if ( isLShiftPressed == false ) { del_mods(MOD_BIT(KC_LSHIFT)); }
-              else if ( isLShiftPressed ) { add_mods(MOD_BIT(KC_LSHIFT)); }
+              if ( isLAltPressed == false && isRAltPressed == false ) {
+                if ( isRShiftPressed ) { add_mods(MOD_BIT(KC_RSHIFT)); }
+                else if ( isLShiftPressed == false ) { del_mods(MOD_BIT(KC_LSHIFT)); }
+                else if ( isLShiftPressed ) { add_mods(MOD_BIT(KC_LSHIFT)); }
+              }
 
               del_key(KC_SCLN);
               send_keyboard_report();
