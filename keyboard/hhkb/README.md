@@ -6,7 +6,7 @@ To install press the switch on your board and then run `sleep 5 && make dfu KEYM
 
 1. Replaces `;` with `:`, this is super useful for Vim & languages such as Ruby, CoffeeScript & CSS. 
 2. Adds media bindings when pressing `fn + [qwe]`.
-3. Tapping `Left Shift` outputs `(`  and `Right Shift` outputs `)`.
+3. Tapping `LShift` will make the next key apply the modifier.
 4. `Control` works as `Escape` when tapped.
 
 #### TODO

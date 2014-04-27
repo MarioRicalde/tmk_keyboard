@@ -18,7 +18,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
      * |-----------------------------------------------------------|
      * |Fn11  |  A|  S|  D|  F|  G|  H|  J|  K|  L|  :|  '|Enter   |
      * |-----------------------------------------------------------|
-     * |Fn14    |  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Fn15  |Fn1|
+     * |Fn12    |  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Fn15  |Fn1|
      * `-----------------------------------------------------------'
      *       |Alt|Gui  |         Space         |Gui  |Alt|
      *       `-------------------------------------------'
@@ -26,7 +26,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
     KEYMAP(ESC, 1,   2,   3,   4,   5,   6,   7,   8,   9,   0,   MINS,EQL, BSLS,GRV,   \
            TAB, Q,   W,   E,   R,   T,   Y,   U,   I,   O,   P,   LBRC,RBRC,BSPC,       \
            FN11,A,   S,   D,   F,   G,   H,   J,   K,   L,   FN13,QUOT,ENT,             \
-           LSFT,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,RSFT,FN1,             \
+           FN12,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,RSFT,FN1,             \
                 LALT,LGUI,          SPC,                RGUI,RALT),
 
     /* Layer 1: HHKB mode with Media Keys (HHKB Fn)
@@ -85,14 +85,12 @@ const uint16_t fn_actions[] __attribute__ ((section (".keymap.fn_actions"))) = {
 #else
 const uint16_t fn_actions[] PROGMEM = {
 #endif
-    [0] = ACTION_DEFAULT_LAYER_SET(0),                // Default layer(not used)
-    [1] = ACTION_LAYER_TAP_TOGGLE(1),                 // HHKB layer(toggle with 5 taps)
+    [0] = ACTION_DEFAULT_LAYER_SET(0),                 // Default layer(not used)
+    [1] = ACTION_LAYER_TAP_TOGGLE(1),                  // HHKB layer(toggle with 5 taps)
 
     [11] = ACTION_MODS_TAP_KEY(MOD_LCTL, KC_ESC),      // LControl with tap Esc
-    [12] = ACTION_MODS_ONESHOT(MOD_LSFT),             // Oneshot Shift*
-    [13] = ACTION_FUNCTION(SCLN_SWAP),            // Close Tab
-    [14] = ACTION_FUNCTION_TAP(LSHIFT_PAREN),             // Macro: LShift with tap '('
-    [15] = ACTION_FUNCTION_TAP(RSHIFT_PAREN),             // Macro: RShift with tap ')'
+    [12] = ACTION_MODS_ONESHOT(MOD_LSFT),              // Oneshot Shift*
+    [13] = ACTION_FUNCTION(SCLN_SWAP),                 // Close Tab
 };
 
 /*
@@ -164,45 +162,6 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
 
               del_key(KC_SCLN);
               send_keyboard_report();
-            }
-            break;
-        case LSHIFT_LPAREN:
-            // LShft + tap '('
-            // NOTE: cant use register_code to avoid conflicting with magic key bind
-            if (event.pressed) {
-                if (tap.count == 0 || tap.interrupted) {
-                    add_mods(MOD_BIT(KC_LSHIFT));
-                } else {
-                    add_mods(MOD_BIT(KC_LSHIFT));
-                    add_key(KC_9);
-                    send_keyboard_report();
-                    del_mods(MOD_BIT(KC_LSHIFT));
-                    del_key(KC_9);
-                    send_keyboard_report();
-                }
-            } else {
-                if (tap.count == 0 || tap.interrupted) {
-                    del_mods(MOD_BIT(KC_LSHIFT));
-                }
-            }
-            break;
-        case RSHIFT_RPAREN:
-            // RShift + tap ')'
-            if (event.pressed) {
-                if (tap.count == 0 || tap.interrupted) {
-                    add_mods(MOD_BIT(KC_RSHIFT));
-                } else {
-                    add_mods(MOD_BIT(KC_RSHIFT));
-                    add_key(KC_0);
-                    send_keyboard_report();
-                    del_mods(MOD_BIT(KC_RSHIFT));
-                    del_key(KC_0);
-                    send_keyboard_report();
-                }
-            } else {
-                if (tap.count == 0 || tap.interrupted) {
-                    del_mods(MOD_BIT(KC_RSHIFT));
-                }
             }
             break;
     }
