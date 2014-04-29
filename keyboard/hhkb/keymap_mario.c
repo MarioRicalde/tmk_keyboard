@@ -25,8 +25,8 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
      */
     KEYMAP(ESC, 1,   2,   3,   4,   5,   6,   7,   8,   9,   0,   MINS,EQL, BSLS,GRV,   \
            TAB, Q,   W,   E,   R,   T,   Y,   U,   I,   O,   P,   LBRC,RBRC,BSPC,       \
-           FN11,A,   S,   D,   F,   G,   H,   J,   K,   L,   FN13,QUOT,ENT,             \
-           FN12,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,RSFT,FN1,             \
+           FN11,A,   S,   D,   F,   G,   H,   J,   K,   L,   FN12,QUOT,ENT,             \
+           FN13,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,RSFT,FN1,             \
                 LALT,LGUI,          SPC,                RGUI,RALT),
 
     /* Layer 1: HHKB mode with Media Keys (HHKB Fn)
@@ -89,8 +89,8 @@ const uint16_t fn_actions[] PROGMEM = {
     [1] = ACTION_LAYER_TAP_TOGGLE(1),                  // HHKB layer(toggle with 5 taps)
 
     [11] = ACTION_MODS_TAP_KEY(MOD_LCTL, KC_ESC),      // LControl with tap Esc
-    [12] = ACTION_MODS_ONESHOT(MOD_LSFT),              // Oneshot Shift*
-    [13] = ACTION_FUNCTION(SCLN_SWAP),                 // Close Tab
+    [12] = ACTION_FUNCTION(SCLN_SWAP),                 // Close Tab
+    [13] = ACTION_MODS_ONESHOT(MOD_LSFT),              // Oneshot Shift*
 };
 
 /*
@@ -131,11 +131,12 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
 void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
     keyevent_t event = record->event;
-    tap_t tap = record->tap;
     bool isLShiftPressed;
     bool isRShiftPressed;
     bool isLAltPressed;
     bool isRAltPressed;
+    bool isLShiftOneShotted;
+    int shiftOneShot;
 
     switch (id) {
         case SCLN_SWAP:
@@ -144,17 +145,20 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
               isRShiftPressed = get_mods() == MOD_BIT(KC_RSHIFT);
               isLAltPressed = get_mods() == MOD_BIT(KC_LALT);
               isRAltPressed = get_mods() == MOD_BIT(KC_RALT);
+              shiftOneShot = 1536 + MOD_BIT(KC_LSHIFT); // 1536 comes from... no idea, that's what get_oneshot_mods() returns when there's no oneshot pressed.
+              isLShiftOneShotted = get_oneshot_mods() == shiftOneShot;
 
               if ( isLAltPressed == false && isRAltPressed == false ) {
                 if ( isRShiftPressed ) { del_mods(MOD_BIT(KC_RSHIFT)); }
-                else if ( isLShiftPressed == false ) { add_mods(MOD_BIT(KC_LSHIFT)); }
-                else if ( isLShiftPressed ) { del_mods(MOD_BIT(KC_LSHIFT)); }
+                else if ( isLShiftPressed == false && isLShiftOneShotted == false) { add_mods(MOD_BIT(KC_LSHIFT)); }
+                else if ( isLShiftPressed ) {  del_mods(MOD_BIT(KC_LSHIFT)); }
+                else if ( isLShiftOneShotted ) { clear_oneshot_mods(); }
               }
 
               add_key(KC_SCLN);
               send_keyboard_report();
 
-              if ( isLAltPressed == false && isRAltPressed == false ) {
+              if ( isLAltPressed == false && isRAltPressed == false && isLShiftOneShotted == false ) {
                 if ( isRShiftPressed ) { add_mods(MOD_BIT(KC_RSHIFT)); }
                 else if ( isLShiftPressed == false ) { del_mods(MOD_BIT(KC_LSHIFT)); }
                 else if ( isLShiftPressed ) { add_mods(MOD_BIT(KC_LSHIFT)); }

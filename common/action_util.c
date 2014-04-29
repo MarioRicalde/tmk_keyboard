@@ -118,6 +118,18 @@ void set_oneshot_mods(uint8_t mods)
     oneshot_time = timer_read();
 #endif
 }
+
+/* Oneshot modifier */
+uint8_t get_oneshot_mods(void)
+{
+    return oneshot_mods;
+}
+
+uint8_t get_oneshot_time(void)
+{
+    return oneshot_time;
+}
+
 void clear_oneshot_mods(void)
 {
     oneshot_mods = 0;
