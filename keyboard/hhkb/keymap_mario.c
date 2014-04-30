@@ -66,8 +66,6 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
 
 /* id for user defined functions */
 enum function_id {
-    LSHIFT_LPAREN,
-    RSHIFT_RPAREN,
     SCLN_SWAP,
 };
 
@@ -141,24 +139,26 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
     switch (id) {
         case SCLN_SWAP:
             if (event.pressed) {
+              xprintf("FN SCLN_SWAP \n");
+
               isLShiftPressed = get_mods() == MOD_BIT(KC_LSHIFT);
               isRShiftPressed = get_mods() == MOD_BIT(KC_RSHIFT);
               isLAltPressed = get_mods() == MOD_BIT(KC_LALT);
               isRAltPressed = get_mods() == MOD_BIT(KC_RALT);
-              shiftOneShot = 1536 + MOD_BIT(KC_LSHIFT); // 1536 comes from... no idea, that's what get_oneshot_mods() returns when there's no oneshot pressed.
+              shiftOneShot = 1536 + MOD_BIT(KC_LSHIFT);
               isLShiftOneShotted = get_oneshot_mods() == shiftOneShot;
 
               if ( isLAltPressed == false && isRAltPressed == false ) {
                 if ( isRShiftPressed ) { del_mods(MOD_BIT(KC_RSHIFT)); }
                 else if ( isLShiftPressed == false && isLShiftOneShotted == false) { add_mods(MOD_BIT(KC_LSHIFT)); }
-                else if ( isLShiftPressed ) {  del_mods(MOD_BIT(KC_LSHIFT)); }
+                else if ( isLShiftPressed ) { del_mods(MOD_BIT(KC_LSHIFT)); }
                 else if ( isLShiftOneShotted ) { clear_oneshot_mods(); }
               }
 
               add_key(KC_SCLN);
               send_keyboard_report();
 
-              if ( isLAltPressed == false && isRAltPressed == false && isLShiftOneShotted == false ) {
+              if ( isLAltPressed == false && isRAltPressed == false ) {
                 if ( isRShiftPressed ) { add_mods(MOD_BIT(KC_RSHIFT)); }
                 else if ( isLShiftPressed == false ) { del_mods(MOD_BIT(KC_LSHIFT)); }
                 else if ( isLShiftPressed ) { add_mods(MOD_BIT(KC_LSHIFT)); }
