@@ -26,10 +26,30 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
     KEYMAP(ESC, 1,   2,   3,   4,   5,   6,   7,   8,   9,   0,   MINS,EQL, BSLS,GRV,   \
            TAB, Q,   W,   E,   R,   T,   Y,   U,   I,   O,   P,   LBRC,RBRC,BSPC,       \
            FN11,A,   S,   D,   F,   G,   H,   J,   K,   L,   FN12,QUOT,ENT,             \
-           FN13,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,RSFT,FN1,             \
-                LALT,LGUI,          SPC,                RGUI,RALT),
+           FN13,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,RSFT,FN2,             \
+                LALT,LGUI,          SPC,                RGUI, FN1),
 
-    /* Layer 1: HHKB mode with Media Keys (HHKB Fn)
+
+    /* Layer 1: Photoshop Layer
+     * ,-----------------------------------------------------------.
+     * |Esc|  1|  2|  3|  4|  5|  6|  7|  8|  9|  0|  -|  =|  \|  `|
+     * |-----------------------------------------------------------|
+     * |Tab  |  Q|  W|  E|  R|  T|  Y|  U|  I|  O|  P|  [|  ]|Backs|
+     * |-----------------------------------------------------------|
+     * |CTRL  |  A|  S|  D|  F|  G|  H|  J|  K|  L|  :|  '|Enter   |
+     * |-----------------------------------------------------------|
+     * |Shift   |  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Shift |Fn1|
+     * `-----------------------------------------------------------'
+     *       |Alt|Gui  |         Space         |Gui  |Alt|
+     *       `-------------------------------------------'
+     */
+    KEYMAP(ESC, 1,   2,   3,   4,   5,   6,   7,   8,   9,   0,   MINS,EQL, BSLS,GRV,   \
+           TAB, Q,   W,   E,   R,   T,   Y,   U,   I,   O,   P,   LBRC,RBRC,BSPC,       \
+           LCTL,A,   S,   D,   F,   G,   H,   J,   K,   L,   SCLN,QUOT,ENT,             \
+           LSFT,Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,RSFT,FN2,             \
+                LALT,LGUI,          SPC,                RGUI, RALT),
+
+    /* Layer 2: HHKB mode with Media Keys (HHKB Fn)
      * ,-----------------------------------------------------------.
      * |Pwr| F1| F2| F3| F4| F5| F6| F7| F8| F9|F10|F11|F12|Ins|Del|
      * |-----------------------------------------------------------|
@@ -46,7 +66,7 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
            CAPS,MPRV,MPLY,MNXT,TRNS,TRNS,TRNS,TRNS,PSCR,SLCK,PAUS, UP, TRNS, BSPC,      \
            TRNS,VOLD,VOLU,MUTE,TRNS,TRNS,PAST,PSLS,HOME,PGUP,LEFT,RGHT,PENT,            \
            TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,PPLS,PMNS,END, PGDN,DOWN,TRNS,TRNS,            \
-                TRNS,TRNS,          TRNS,               TRNS,TRNS),
+                TRNS,TRNS,          TRNS,               FN1,TRNS),
 
     /* Layer #: Some Mode
      * ,-----------------------------------------------------------.
@@ -85,6 +105,7 @@ const uint16_t fn_actions[] PROGMEM = {
 #endif
     [0] = ACTION_DEFAULT_LAYER_SET(0),                 // Default layer(not used)
     [1] = ACTION_LAYER_TAP_TOGGLE(1),                  // HHKB layer(toggle with 5 taps)
+    [2] = ACTION_LAYER_TAP_TOGGLE(2),                  // HHKB layer(toggle with 5 taps)
 
     [11] = ACTION_MODS_TAP_KEY(MOD_LCTL, KC_ESC),      // LControl with tap Esc
     [12] = ACTION_FUNCTION(SCLN_SWAP),                 // Close Tab
@@ -145,11 +166,11 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
               isRShiftPressed = get_mods() == MOD_BIT(KC_RSHIFT);
               isLAltPressed = get_mods() == MOD_BIT(KC_LALT);
               isRAltPressed = get_mods() == MOD_BIT(KC_RALT);
-              shiftOneShot = 1280 + MOD_BIT(KC_LSHIFT);
+              shiftOneShot = 256 + MOD_BIT(KC_LSHIFT);
               isLShiftOneShotted = get_oneshot_mods() == shiftOneShot;
 
-              xprintf("%d\n", shiftOneShot);
-              xprintf("%d\n", get_oneshot_mods());
+              // xprintf("%d\n", shiftOneShot);
+              // xprintf("%d\n", get_oneshot_mods());
 
 
               if ( isLAltPressed == false && isRAltPressed == false ) {
